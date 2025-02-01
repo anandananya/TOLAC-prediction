@@ -4,7 +4,7 @@ This repository contains code and resources to analyze and predict outcomes rela
 
 ## Files and Scripts
 
-### `make_csv.py`
+### `Python_files/make_csv.py`
 A Python script to process natality data files for multiple years. It:
 - Reads fixed-width natality data files (e.g., `Nat2016.txt` to `Nat2023.txt`).
 - Filters the data for relevant fields and conditions.
@@ -12,10 +12,10 @@ A Python script to process natality data files for multiple years. It:
 
 If you would rather like to do this in R:
 
-### `Natality_createcsv.R`
+### `R_files/Natality_createcsv.R`
 An R script to process natality data and generate cleaned CSVs. It serves as an alternative to the Python implementation.
 
-### `Natality_logreg.R`
+### `R_files/Natality_logreg.R`
 An R script that performs logistic regression analysis to predict TOLAC outcomes based on natality data.
 
 ### `csv_files/`
