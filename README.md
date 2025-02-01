@@ -2,8 +2,6 @@
 
 This repository contains code and resources to analyze and predict outcomes related to Trial of Labor After Cesarean (TOLAC). The project processes natality data and performs predictive analysis using Python and R.
 
-## Repository Structure
-
 ## Files and Scripts
 
 ### `make_csv.py`
