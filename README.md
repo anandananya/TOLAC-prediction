@@ -2,41 +2,64 @@
 
 This repository contains code and resources to analyze and predict outcomes related to Trial of Labor After Cesarean (TOLAC). The project processes natality data and performs predictive analysis using Python and R.
 
-## Files and Scripts
+## Repository Structure
 
-### `Python_files/make_csv.py`
-A Python script to process natality data files for multiple years. It:
-- Reads fixed-width natality data files (e.g., `Nat2016.txt` to `Nat2023.txt`).
-- Filters the data for relevant fields and conditions.
-- Outputs processed CSV files into the `csv_files/` directory.
+### Folder Overview
+- **`Python_files/`**: Contains Python scripts for data processing and analysis.
+- **`R_files/`**: Contains R scripts for alternative data processing and analysis.
+- **`csv_files/`**: Pre-processed natality CSV files ready for analysis.
 
-If you would rather like to do this in R:
+### File Descriptions
 
-### `R_files/Natality_createcsv.R`
-An R script to process natality data and generate cleaned CSVs. It serves as an alternative to the Python implementation.
+#### **Python_files/**
+- **`make_csv.py`**: 
+  - Processes natality data files for multiple years.
+  - Reads fixed-width natality data files (e.g., `Nat2016.txt` to `Nat2023.txt`).
+  - Filters the data for relevant fields and conditions.
+  - Outputs processed CSV files into the `csv_files/` directory.
+- **`logreg.py`**:
+  - Performs logistic regression analysis on natality data.
+  - Users can specify their own CSV file as input via the command line:
+    ```bash
+    python Python_files/logreg.py path/to/your_data.csv
+    ```
 
-### `R_files/Natality_logreg.R`
-An R script that performs logistic regression analysis to predict TOLAC outcomes based on natality data.
+#### **R_files/**
+- **`Natality_createcsv.R`**:
+  - Processes natality data and generates cleaned CSVs as an alternative to the Python implementation.
+- **`Natality_logreg.R`**:
+  - Performs logistic regression analysis to predict TOLAC outcomes based on natality data.
 
-### `Python_files/logreg.py`
-A Python script that performs logistic regression analysis on natality data. Users can specify their own CSV file as input via the command line:
-```bash
-python Python_files/logreg.py path/to/your_data.csv
-```
+#### **csv_files/**
+- Contains **pre-processed natality CSV files**, so users do not need to run `make_csv.py` or `Natality_createcsv.R` manually.
+- These files can be directly used as input for `logreg.py`.
 
-### `csv_files/`
-This directory contains **pre-processed natality CSV files**, so users do not need to run `make_csv.py` or `Natality_createcsv.R` to generate them manually. You can directly use these files as input for `logreg.py`.
+#### **environment.yml**
+- A Conda environment file that includes all the required dependencies to run the project.
+- To create the environment, run the following command:
+  ```bash
+  conda env create -f environment.yml
+  ```
+- Activate the environment using:
+  ```bash
+  conda activate tolac-env
+  ```
+
+---
 
 ## Installation and Setup
 
 ### Prerequisites
 - Python 3.x
 - R with necessary libraries (`readr`, `data.table`, etc.)
-- Pandas (install via `pip install pandas`)
-- Statsmodels (install via `pip install statsmodels`)
-- Scikit-learn (install via `pip install scikit-learn`)
+- Conda (if using the provided `environment.yml` file)
+- Python packages:
+  - Pandas (install via `pip install pandas`)
+  - Statsmodels (install via `pip install statsmodels`)
+  - Scikit-learn (install via `pip install scikit-learn`)
 
 ### Cloning the Repository
 ```bash
 git clone https://github.com/anandananya/TOLAC-prediction.git
 cd TOLAC-prediction
+```
