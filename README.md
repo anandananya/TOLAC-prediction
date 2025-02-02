@@ -57,9 +57,31 @@ This repository contains code and resources to analyze and predict outcomes rela
   - Pandas (install via `pip install pandas`)
   - Statsmodels (install via `pip install statsmodels`)
   - Scikit-learn (install via `pip install scikit-learn`)
+- R packages:
+  - dplyr (install via `install.packages('dplyr')`)
+  - pROC (install via `install.packages('pROC')`)
+  - caret (install via `install.packages('caret')`)
+  - readr (install via `install.packages('readr')`)
+  - data.table (install via `install.packages('data.table')`)
 
 ### Cloning the Repository
 ```bash
 git clone https://github.com/anandananya/TOLAC-prediction.git
 cd TOLAC-prediction
 ```
+
+## Running the Analysis  
+
+Once the environment is set up and the necessary dependencies are installed, you can run the analysis using the following commands:  
+
+### Running the Python script  
+```bash
+python Python_files/logreg.py data/natality_{year}.csv
+```
+
+### Running the R script  
+```bash
+Rscript R_files/Natality_logreg.R data/natality_{year}.csv
+```
+
+Replace `{year}` with the actual year of the dataset you want to analyze.

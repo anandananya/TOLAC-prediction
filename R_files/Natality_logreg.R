@@ -1,9 +1,10 @@
-# Load libraries
+## Load libraries
 library(dplyr)
 library(pROC)
 library(caret)
 library(readr)
 library(data.table)
+
 
 # # Convert character variables to factors
 # final_data <- final_data %>%
@@ -54,8 +55,15 @@ library(data.table)
 
 #Read in CSV maintaining previous factor level order (START HERE)
 #final_data <- fread("/Users/anishamittal/Desktop/Carle/Year 4/Data Science/natality_2022_final.csv")
-print("Loading final_data...")
-final_data <- read.csv("csv_files/natality_2017.csv", stringsAsFactors = TRUE)
+# Get command line arguments
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) == 0) {
+  stop("Error: No CSV file provided. Usage: Rscript R_files/Natality_logreg.R <csv_file>")
+}
+csv_file <- args[1]
+
+print(paste("Loading data from:", csv_file))
+final_data <- read.csv(csv_file, stringsAsFactors = TRUE)
 print(head(final_data))
 
 print("Checking column names:")
@@ -86,7 +94,6 @@ final_data$Payment <- factor(final_data$Payment,
   levels = c(1, 2, 3, 4, 5, 6, 8), 
   labels = c("Medicaid", "Private Insurance", "Self-Pay", "Indian Health Service", "CHAMPUS/TRICARE", "Other Gov", "Other"))
 
-
 print(head(final_data))
 
 # Make Delivery Method a binary variable
@@ -96,42 +103,27 @@ final_data$Delivery_Method_Binary <- ifelse(final_data$Delivery.Method == "VBAC"
 set.seed(123)
 
 # Split the dataset into training (70%) and testing (30%)
-#train_indices <- createDataPartition(final_data$`Delivery Method`, p = 0.7, list = FALSE)
-#train_data <- final_data[train_indices, ]
-#test_data <- final_data[-train_indices, ]
 split_ratio <- 0.7  # 70% for training
-
-# Calculate the number of rows in the training set
 train_size <- floor(split_ratio * nrow(final_data))
-
-# Sample indices for the training set
 train_indices <- sample(seq_len(nrow(final_data)), size = train_size)
-
-# Create training and testing datasets
 train_data <- final_data[train_indices, ]
 test_data <- final_data[-train_indices, ]
 
 # Fit the logistic regression model
-logistic_model <- glm(Delivery_Method_Binary ~ `Birth.Place` + `Mother.s.Age` + `Mother.s.Race.Hispanic` + `Mother.s.Education` + 
-                      `Prior.Births.Now.Living` + `Prior.Births.Now.Dead` + `Interval.Since.Last.Live.Birth` + `Number.of.Prenatal.Visits` + 
-                      `Cigarettes.Before.Pregnancy` + `X1st.Tri.Cigarettes` + `X2nd.Tri.Cigarettes` + `X3rd.Tri.Cigarettes` + 
-                      `Pre.pregnancy.BMI` + `Weight.Gain` + `Pre.pregnancy.Diabetes` + `Gestational.Diabetes` + 
-                      `Pre.pregnancy.HTN` + `Gestational.HTN` + `Previous.Preterm.Birth` + `Number.of.Previous.Cesareans` + 
-                      `Gonorrhea` + `Syphilis` + `Chlamydia` + `Hep.B` + `Hep.C` + `Payment` + `Obstetric.Estimate`, 
+logistic_model <- glm(Delivery_Method_Binary ~ Birth.Place + Mother.s.Age + Mother.s.Race.Hispanic + Mother.s.Education + 
+                      Prior.Births.Now.Living + Prior.Births.Now.Dead + Interval.Since.Last.Live.Birth + Number.of.Prenatal.Visits + 
+                      Cigarettes.Before.Pregnancy + X1st.Tri.Cigarettes + X2nd.Tri.Cigarettes + X3rd.Tri.Cigarettes + 
+                      Pre.pregnancy.BMI + Weight.Gain + Pre.pregnancy.Diabetes + Gestational.Diabetes + 
+                      Pre.pregnancy.HTN + Gestational.HTN + Previous.Preterm.Birth + Number.of.Previous.Cesareans + 
+                      Gonorrhea + Syphilis + Chlamydia + Hep.B + Hep.C + Payment + Obstetric.Estimate, 
                       data = train_data, 
                       family = binomial)
-
 
 # Predict probabilities on the test dataset
 predicted_probabilities <- predict(logistic_model, newdata = test_data, type = "response")
 
-# Convert probabilities to predicted classes (you can choose a threshold, e.g., 0.5)
-#predicted_classes <- ifelse(predicted_probabilities > 0.5, "VBAC", "Repeat C-section")
-
 # Calculate AUROC
-roc_curve <- roc(test_data$`Delivery_Method_Binary`, predicted_probabilities)
-
-# Print AUROC
+roc_curve <- roc(test_data$Delivery_Method_Binary, predicted_probabilities)
 auc_value <- auc(roc_curve)
 print(auc_value)
 
@@ -142,7 +134,7 @@ plot(roc_curve, main = "ROC Curve")
 model_summary <- summary(logistic_model)
 print(model_summary)
 
-#Cross Validation
+# Cross Validation
 final_data$Delivery_Method_Binary <- as.factor(final_data$Delivery_Method)
 final_data2 <- final_data
 
@@ -151,11 +143,9 @@ factor_vars <- c("Delivery_Method_Binary", "Birth.Place", "Mother.s.Race.Hispani
                  "Pre.pregnancy.HTN", "Gestational.HTN", "Previous.Preterm.Birth", "Gonorrhea", 
                  "Syphilis", "Chlamydia", "Hep.B", "Hep.C", "Payment")
 
-
 print("Checking column names in final_data2 before modifying factor levels:")
 print(colnames(final_data2))
 
-# Loop through each factor variable and fix levels using make.names()
 for (var in factor_vars) {
   if (!(var %in% colnames(final_data2))) {
     print(paste("WARNING: Variable", var, "not found in final_data2!"))
@@ -182,12 +172,8 @@ cv_model <- train(Delivery_Method_Binary ~ Birth.Place + Mother.s.Age + Mother.s
                   metric = "ROC")
 print(cv_model$results$ROC)
 
-
-
 # Extract coefficients, p-values, and significance levels
 coefficients <- summary(cv_model)$coefficients
-
-# Display the results in a table format
 coef_table <- data.frame(
   Estimate = coefficients[, "Estimate"],
   Std.Error = coefficients[, "Std. Error"],
@@ -200,6 +186,4 @@ coef_table <- data.frame(
     symbols = c("***", "**", "*", ".", " ")
   )
 )
-
-# Print the coefficients table
 print(coef_table)
