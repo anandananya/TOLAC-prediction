@@ -1,15 +1,22 @@
 import pandas as pd
 import numpy as np
+import argparse
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, roc_curve
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
 
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description="Run logistic regression on a user-specified CSV file.")
+parser.add_argument("csv_file", type=str, help="Path to the input CSV file")
+args = parser.parse_args()
+
 # Load data
 print("Loading final_data...")
-final_data = pd.read_csv("data/natality_2022_final.csv")
-print("Data loaded successfully. First few rows:")
+final_data = pd.read_csv(args.csv_file)
+print("Data loaded successfully from:", args.csv_file)
+print("First few rows:")
 print(final_data.head())
 
 # Convert categorical variables to factors
@@ -81,7 +88,6 @@ if constant_cols:
 # Ensure all predictor columns are numeric
 X_train = X_train.astype(int)
 X_test = X_test.astype(int)
-
 
 # Drop NaN rows (if any remain)
 X_train = X_train.dropna()
