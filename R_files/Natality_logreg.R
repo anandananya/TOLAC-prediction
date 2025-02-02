@@ -55,7 +55,7 @@ library(data.table)
 #Read in CSV maintaining previous factor level order (START HERE)
 #final_data <- fread("/Users/anishamittal/Desktop/Carle/Year 4/Data Science/natality_2022_final.csv")
 print("Loading final_data...")
-final_data <- read.csv("data/natality_2022_final.csv", stringsAsFactors = TRUE)
+final_data <- read.csv("csv_files/natality_2017.csv", stringsAsFactors = TRUE)
 print(head(final_data))
 
 print("Checking column names:")
