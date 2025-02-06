@@ -113,6 +113,15 @@ print(logistic_model.summary())
 # Predict probabilities on the test dataset
 predicted_probabilities = logistic_model.predict(sm.add_constant(X_test))
 
+# Debug: Check predicted probabilities and y_test
+print("Predicted probabilities sample:", predicted_probabilities[:10])
+print("y_test sample:", y_test[:10])
+print("Lengths - y_test:", len(y_test), ", predicted_probabilities:", len(predicted_probabilities))
+
+# Check for NaNs
+print("Are there NaNs in predicted_probabilities?", np.any(np.isnan(predicted_probabilities)))
+print("Are there NaNs in y_test?", np.any(np.isnan(y_test)))
+
 # Calculate AUROC
 auc_value = roc_auc_score(y_test, predicted_probabilities)
 print(f"AUROC: {auc_value}")
@@ -127,7 +136,7 @@ plt.title("ROC Curve")
 plt.legend(loc="lower right")
 plt.show()
 
-# Cross-validation
+# Perform cross-validation
 logistic_reg = LogisticRegression(max_iter=500, solver='liblinear')
 scores = cross_val_score(logistic_reg, X_train, y_train, cv=5, scoring='roc_auc')
 print(f"Cross-validated AUROC: {np.mean(scores)}")
