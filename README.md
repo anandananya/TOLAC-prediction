@@ -17,11 +17,21 @@ This repository contains code and resources to analyze and predict outcomes rela
   - Reads fixed-width natality data files (e.g., `Nat2016.txt` to `Nat2023.txt`).
   - Filters the data for relevant fields and conditions.
   - Outputs processed CSV files into the `csv_files/` directory.
+
 - **`logreg.py`**:
   - Performs logistic regression analysis on natality data.
   - Users can specify their own CSV file as input via the command line:
     ```bash
     python Python_files/logreg.py path/to/your_data.csv
+    ```
+
+- **`MLP.py`**:
+  - Implements a Multi-Layer Perceptron (MLP) neural network to predict TOLAC outcomes.
+  - Includes preprocessing steps, class balancing, early stopping, and regularization.
+  - Outputs key metrics such as AUROC, loss curves, and classification reports.
+  - Users can run the script with:
+    ```bash
+    python Python_files/MLP.py path/to/your_data.csv
     ```
 
 #### **R_files/**
@@ -32,55 +42,52 @@ This repository contains code and resources to analyze and predict outcomes rela
 
 #### **csv_files/**
 - Contains **pre-processed natality CSV files**, so users do not need to run `make_csv.py` or `Natality_createcsv.R` manually.
-- These files can be directly used as input for `logreg.py`.
+- These files can be directly used as input for `logreg.py` or `MLP.py`.
 
 #### **environment.yml**
 - A Conda environment file that includes all the required dependencies to run the project.
 - To create the environment, run the following command:
-  ```bash
-  conda env create -f environment.yml
-  ```
+    ```bash
+    conda env create -f environment.yml
+    ```
 - Activate the environment using:
-  ```bash
-  conda activate tolac-env
-  ```
+    ```bash
+    conda activate tolac-env
+    ```
 
 ---
 
 ## Installation and Setup
 
-### Prerequisites
-- Python 3.x
-- R with necessary libraries (`readr`, `data.table`, etc.)
-- Conda (if using the provided `environment.yml` file)
-- Python packages:
-  - Pandas (install via `pip install pandas`)
-  - Statsmodels (install via `pip install statsmodels`)
-  - Scikit-learn (install via `pip install scikit-learn`)
-- R packages:
-  - dplyr (install via `install.packages('dplyr')`)
-  - pROC (install via `install.packages('pROC')`)
-  - caret (install via `install.packages('caret')`)
-  - readr (install via `install.packages('readr')`)
-  - data.table (install via `install.packages('data.table')`)
-
-### Cloning the Repository
 ```bash
+# Prerequisites
+# Python 3.x (recommended: Python 3.8+)
+# R with necessary libraries (readr, data.table, etc.)
+# Conda (if using the provided environment.yml file)
+
+# Python packages
+pip install pandas statsmodels scikit-learn tensorflow matplotlib seaborn
+
+# R packages
+Rscript -e "install.packages(c('dplyr', 'pROC', 'caret', 'readr', 'data.table'))"
+
+# Cloning the repository
 git clone https://github.com/anandananya/TOLAC-prediction.git
 cd TOLAC-prediction
 ```
 
+---
+
 ## Running the Analysis  
 
-Once the environment is set up and the necessary dependencies are installed, you can run the analysis using the following commands:  
-
-### Running the Python script  
 ```bash
+# Running Logistic Regression in Python
 python Python_files/logreg.py data/natality_{year}.csv
-```
 
-### Running the R script  
-```bash
+# Running MLP Neural Network in Python
+python Python_files/MLP.py data/natality_{year}.csv
+
+# Running the R script
 Rscript R_files/Natality_logreg.R data/natality_{year}.csv
 ```
 
