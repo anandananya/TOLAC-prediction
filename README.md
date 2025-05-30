@@ -1,10 +1,11 @@
 # TOLAC-prediction
 
-This repository contains code and resources to analyze and predict outcomes related to Trial of Labor After Cesarean (TOLAC). The project processes natality data and performs predictive analysis using Python and R.
+Back2Birth is a mobile application designed to help expectant mothers make informed decisions about Trial of Labor After Cesarean (TOLAC). Using advanced machine learning models trained on comprehensive natality data, the app provides personalized predictions for successful vaginal birth after cesarean (VBAC). By considering various maternal factors, medical history, and current pregnancy details, Back2Birth empowers women with data-driven insights for their birth planning journey.
 
 ## Repository Structure
 
 ### Folder Overview
+- **`mobile-app/`**: React Native mobile application for Back2Birth.
 - **`Python_files/`**: Contains Python scripts for data processing and analysis.
 - **`R_files/`**: Contains R scripts for alternative data processing and analysis.
 - **`csv_files/`**: Pre-processed natality CSV files ready for analysis.
