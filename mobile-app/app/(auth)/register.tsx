@@ -1,7 +1,42 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import { Stack, router } from 'expo-router';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../lib/firebase';
 
-export default function SigninScreen() {
+export default function RegisterScreen() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleRegister = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter both email and password');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      router.push('/(auth)/predict');
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      Alert.alert('Error', error.message || 'Failed to create account');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -11,7 +46,7 @@ export default function SigninScreen() {
       >
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
           <View style={styles.topRow}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <TouchableOpacity onPress={() => router.push('/login')} style={styles.backButton}>
               <Text style={styles.backText}>{'<'} Back</Text>
             </TouchableOpacity>
           </View>
@@ -25,6 +60,10 @@ export default function SigninScreen() {
                 placeholder="Email"
                 placeholderTextColor="#ba9cb0"
                 style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
               />
             </View>
 
@@ -34,11 +73,19 @@ export default function SigninScreen() {
                 placeholderTextColor="#ba9cb0"
                 style={styles.input}
                 secureTextEntry
+                value={password}
+                onChangeText={setPassword}
               />
             </View>
 
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Register</Text>
+            <TouchableOpacity
+              style={[styles.button, isLoading && styles.buttonDisabled]}
+              onPress={handleRegister}
+              disabled={isLoading}
+            >
+              <Text style={styles.buttonText}>
+                {isLoading ? 'Creating Account...' : 'Register'}
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -90,22 +137,15 @@ const styles = StyleSheet.create({
     height: 56,
     fontSize: 16,
   },
-  linkRowCentered: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 24,
-  },
-  forgot: {
-    color: '#ba9cb0',
-    fontSize: 14,
-    textDecorationLine: 'underline',
-  },
   button: {
     backgroundColor: '#f20ca5',
     height: 48,
     borderRadius: 999,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: '#555',
   },
   buttonText: {
     color: '#fff',

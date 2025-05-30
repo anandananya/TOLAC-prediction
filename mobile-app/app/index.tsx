@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 import { router, Stack } from 'expo-router';
 
@@ -25,7 +26,7 @@ export default function Index() {
         </View>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push('/(auth)/login')}
+          onPress={() => router.replace("/(auth)/login")}
         >
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
