@@ -1,6 +1,6 @@
 // MultiStepDetailsForm.tsx
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, TouchableOpacity, Platform, Modal, FlatList } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, TouchableOpacity, Platform, Modal, FlatList, Alert } from 'react-native';
 import { Stack, router } from 'expo-router';
 
 const steps = ["Basic Info", "Prenatal Care", "Health History", "Demographics"];
@@ -98,9 +98,77 @@ const Dropdown: React.FC<DropdownProps> = ({ options, value, onSelect, placehold
 export default function PredictScreen() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Record<string, string | number | boolean>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Format the data - convert string values to numbers where needed
+      const formattedData = {
+        "Mother's Age": Number(formData["Mother's Age"]),
+        "Prior Births Now Living": Number(formData["Prior Births Now Living"]),
+        "Prior Births Now Dead": Number(formData["Prior Births Now Dead"]),
+        "Interval Since Last Live Birth": Number(formData["Interval Since Last Live Birth"]),
+        "Number of Prenatal Visits": Number(formData["Number of Prenatal Visits"]),
+        "Pre-pregnancy BMI": Number(formData["Pre-pregnancy BMI"]),
+        "Weight Gain": Number(formData["Weight Gain"]),
+        "Number of Previous Cesareans": Number(formData["Number of Previous Cesareans"]),
+        "Obstetric Estimate": Number(formData["Obstetric Estimate"]),
+        "Pre-pregnancy Diabetes": formData["Pre-pregnancy Diabetes"] || "No",
+        "Gestational Diabetes": formData["Gestational Diabetes"] || "No",
+        "Pre-pregnancy HTN": formData["Pre-pregnancy HTN"] || "No",
+        "Gestational HTN": formData["Gestational HTN"] || "No",
+        "Previous Preterm Birth": formData["Previous Preterm Birth"] || "No",
+        "Mother's Race": formData["Mother's Race"] || "",
+        "Mother's Education": formData["Mother's Education"] || "",
+        "Payment Method": formData["Payment Method"] || "",
+      };
+
+      console.log('Submitting formatted data:', formattedData);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+      const response = await fetch('http://192.168.68.136:5001/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+        signal: controller.signal,
+      });      
+
+      clearTimeout(timeoutId);
+      console.log('Response received:', response.status);
+
+      const result = await response.json();
+      console.log('Parsed result:', result);
+
+      if (result.success) {
+        router.push({
+          pathname: '/(auth)/results',
+          params: {
+            probability: String(result.prediction.probability),
+            risk_level: result.prediction.risk_level,
+            message: result.prediction.message,
+          },
+        });
+      } else {
+        Alert.alert("Prediction Error", result.error || "Something went wrong");
+      }
+    } catch (error: any) {
+      console.error("Request failed:", error);
+      if (error.name === 'AbortError') {
+        Alert.alert("Timeout", "The request took too long to respond. Please try again.");
+      } else {
+        Alert.alert("Error", "Could not connect to prediction service. Please check if the server is running.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
@@ -138,6 +206,7 @@ export default function PredictScreen() {
                 placeholder="Enter age" 
                 placeholderTextColor="#ba9cb0"
                 style={styles.input} 
+                value={String(formData['Mother\'s Age'] ?? '')}
                 onChangeText={text => handleChange('Mother\'s Age', text)} 
               />
             </View>
@@ -147,6 +216,7 @@ export default function PredictScreen() {
                 placeholder="Enter number" 
                 placeholderTextColor="#ba9cb0"
                 style={styles.input} 
+                value={String(formData['Prior Births Now Living'] ?? '')}
                 onChangeText={text => handleChange('Prior Births Now Living', text)} 
               />
             </View>
@@ -156,6 +226,7 @@ export default function PredictScreen() {
                 placeholder="Enter number" 
                 placeholderTextColor="#ba9cb0"
                 style={styles.input} 
+                value={String(formData['Prior Births Now Dead'] ?? '')}
                 onChangeText={text => handleChange('Prior Births Now Dead', text)} 
               />
             </View>
@@ -165,6 +236,7 @@ export default function PredictScreen() {
                 placeholder="Enter months" 
                 placeholderTextColor="#ba9cb0"
                 style={styles.input} 
+                value={String(formData['Interval Since Last Live Birth'] ?? '')}
                 onChangeText={text => handleChange('Interval Since Last Live Birth', text)} 
               />
             </View>
@@ -179,6 +251,7 @@ export default function PredictScreen() {
                 placeholder="Enter number" 
                 placeholderTextColor="#ba9cb0"
                 style={styles.input} 
+                value={String(formData['Number of Prenatal Visits'] ?? '')}
                 onChangeText={text => handleChange('Number of Prenatal Visits', text)} 
               />
             </View>
@@ -188,6 +261,7 @@ export default function PredictScreen() {
                 placeholder="Enter BMI" 
                 placeholderTextColor="#ba9cb0"
                 style={styles.input} 
+                value={String(formData['Pre-pregnancy BMI'] ?? '')}
                 onChangeText={text => handleChange('Pre-pregnancy BMI', text)} 
               />
             </View>
@@ -197,6 +271,7 @@ export default function PredictScreen() {
                 placeholder="Enter weight gain" 
                 placeholderTextColor="#ba9cb0"
                 style={styles.input} 
+                value={String(formData['Weight Gain'] ?? '')}
                 onChangeText={text => handleChange('Weight Gain', text)} 
               />
             </View>
@@ -206,6 +281,7 @@ export default function PredictScreen() {
                 placeholder="Enter number" 
                 placeholderTextColor="#ba9cb0"
                 style={styles.input} 
+                value={String(formData['Number of Previous Cesareans'] ?? '')}
                 onChangeText={text => handleChange('Number of Previous Cesareans', text)} 
               />
             </View>
@@ -215,6 +291,7 @@ export default function PredictScreen() {
                 placeholder="Enter weeks" 
                 placeholderTextColor="#ba9cb0"
                 style={styles.input} 
+                value={String(formData['Obstetric Estimate'] ?? '')}
                 onChangeText={text => handleChange('Obstetric Estimate', text)} 
               />
             </View>
@@ -307,16 +384,25 @@ export default function PredictScreen() {
       
       <View style={styles.buttonContainer}>
         {currentStep > 0 && (
-          <TouchableOpacity style={styles.secondaryButton} onPress={prevStep}>
+          <TouchableOpacity 
+            style={styles.secondaryButton} 
+            onPress={prevStep}
+            disabled={isLoading}
+          >
             <Text style={styles.secondaryButtonText}>Previous</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity 
-          style={[styles.primaryButton, currentStep === 0 && styles.fullWidthButton]} 
-          onPress={currentStep === steps.length - 1 ? () => console.log(formData) : nextStep}
+          style={[
+            styles.primaryButton, 
+            currentStep === 0 && styles.fullWidthButton,
+            isLoading && styles.disabledButton
+          ]} 
+          onPress={currentStep === steps.length - 1 ? handleSubmit : nextStep}
+          disabled={isLoading}
         >
           <Text style={styles.primaryButtonText}>
-            {currentStep === steps.length - 1 ? 'Submit' : 'Next'}
+            {isLoading ? 'Loading...' : currentStep === steps.length - 1 ? 'Submit' : 'Next'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -524,5 +610,8 @@ const styles = StyleSheet.create({
   dropdownItemTextSelected: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  disabledButton: {
+    opacity: 0.7,
   },
 });
