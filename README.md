@@ -1,7 +1,17 @@
 # TOLAC-prediction
 
-Back2Birth is a mobile application designed to help expectant mothers make informed decisions about Trial of Labor After Cesarean (TOLAC). Using advanced machine learning models trained on comprehensive natality data, the app provides personalized predictions for successful vaginal birth after cesarean (VBAC). By considering various maternal factors, medical history, and current pregnancy details, Back2Birth empowers women with data-driven insights for their birth planning journey.
+Back2Birth is a mobile application designed to help expectant mothers make informed decisions about **Trial of Labor After Cesarean (TOLAC)**. Using machine learning models trained on comprehensive natality data, the app provides personalized predictions for the likelihood of **successful vaginal birth after cesarean (VBAC)**.
 
+By considering maternal history, medical risk factors, and current pregnancy details, Back2Birth empowers women with data-driven insights for birth planning.
+---
+
+## 📱 App Demo
+
+<div align="center">
+  <img src="mobile-app/assets/images/app.png" alt="App Screenshot" width="300"/>
+</div>
+
+---
 ## Repository Structure
 
 ### Folder Overview
@@ -61,21 +71,26 @@ Back2Birth is a mobile application designed to help expectant mothers make infor
 ## Installation and Setup
 
 ```bash
-# Prerequisites
-# Python 3.x (recommended: Python 3.8+)
-# R with necessary libraries (readr, data.table, etc.)
-# Conda (if using the provided environment.yml file)
-
-# Python packages
-pip install pandas statsmodels scikit-learn tensorflow matplotlib seaborn
-
-# R packages
-Rscript -e "install.packages(c('dplyr', 'pROC', 'caret', 'readr', 'data.table'))"
-
-# Cloning the repository
+# Clone the repository
 git clone https://github.com/anandananya/TOLAC-prediction.git
 cd TOLAC-prediction
+
+# Set up Python backend environment
+conda env create -f environment.yml
+conda activate tolac-env
+
+# Install any missing dependencies (if not included in environment.yml)
+pip install flask flask-cors joblib numpy scikit-learn
+
+# R packages (if you plan to use the R scripts)
+Rscript -e "install.packages(c('dplyr', 'pROC', 'caret', 'readr', 'data.table'))"
+
+# Set up the mobile app
+cd mobile-app
+npm install
+npm run
 ```
+
 
 ---
 
