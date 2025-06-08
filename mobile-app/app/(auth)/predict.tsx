@@ -134,7 +134,7 @@ export default function PredictScreen() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-      const response = await fetch('http://192.168.68.136:5001/predict', {
+      const response = await fetch('https://tolac-prediction.onrender.com/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
