@@ -10,7 +10,7 @@ By considering maternal history, medical risk factors, and current pregnancy det
 ## 📱 App Demo
 
 <div align="center">
-  <img src="mobile-app/assets/images/app_demo.gif" alt="App Demo" width="300"/>
+  <img src="app_demo.gif" alt="App Demo" width="300"/>
 </div>
 
 
